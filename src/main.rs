@@ -1,5 +1,6 @@
 use std::io::stdin;
 
+#[derive(Debug)]
 struct Visitor{
     name: String,
     greeting: String
@@ -20,24 +21,35 @@ impl Visitor{
 fn main() {
     println!(":: 🌴 Welcome to the Treehouse 🌴 ::  🙏 ::");
 
-    let visitors = [
+    let mut visitors = vec![
         Visitor::new("bert", "Hello Bert, enjoy your treehouse."),
         Visitor::new("steve", "Hi Steve. Your milk is in the fridge. 🥛"),
         Visitor::new("fred", "Wow, who invited Fred? 🙂")
     ];
 
-    println!("Hello, what's your name? 🤷‍");
-    let name = whats_your_name();
+    loop {
+        println!("Hello, what's your name? 🤷‍ (Leave empty and press ENTER to quit)");
+        let name = whats_your_name();
+        let known_visitor = visitors
+            .iter()
+            .find(|visitor| visitor.name == name);
 
-    let known_visitor = visitors
-        .iter()
-        .find(|visitor| visitor.name == name);
-
-    match known_visitor {
-        Some(name) => name.greet(),
-        None => println!("Sorry {}, you aren't on the list. 😞", name)
+        match known_visitor {
+            Some(name) => name.greet(),
+            None => {
+                if name.is_empty(){
+                    break;
+                } else{
+                    println!("Sorry {}, you aren't on the visitors list. 😞", name);
+                    visitors.push(
+                        Visitor::new(&name, "New Friend")
+                    )
+                }
+            }
+        }
     }
-
+    println!("The final list of visitors:");
+    println!("{:#?}", visitors);
 }
 
 fn whats_your_name() -> String{
